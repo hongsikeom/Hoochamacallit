@@ -1,6 +1,8 @@
 {
     "files.associations": {
         "hoochamacallit.h": "c",
-        "semaphorestruct.h": "c"
+        "semaphorestruct.h": "c",
+        "masterlist.h": "c",
+        "datareader.h": "c"
     }
 }

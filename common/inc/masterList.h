@@ -12,14 +12,15 @@
 #define __MASTER_LIST_H__
 
 #define MAX_DC_ROLES 10
+#define OUT_OF_DC_INDEX -1
 
 typedef struct
 {
 	pid_t dcProcessID;
-	int lastTimeHeardFrom;
-	} DCInfo;
+	long lastTimeHeardFrom;
+} DCInfo;
 
-typedef struct
+typedef struct 
 {
 	int msgQueueID;
 	int numberOfDCs;
@@ -32,3 +33,6 @@ extern struct DCInfo DCInfo;
 extern struct MasterList MasterList;
 
 #endif
+
+void deleteDC(MasterList *masterList, pid_t dcProcessID);
+void updateDC(MasterList *masterList, pid_t dcProcessID);

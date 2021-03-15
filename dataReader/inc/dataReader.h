@@ -11,3 +11,5 @@
 // Function prototypes
 int createMessageQueue();
 int createSharedMemory();
+void alarmHandler(int sigNum);
+void checkDCProcessID(pid_t *DCProcessIDList, int *listCounter, pid_t DCprocessID);
