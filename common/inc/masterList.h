@@ -39,5 +39,5 @@ extern struct MasterList MasterList;
 #endif
 
 // Prototypes
-void deleteDC(MasterList *masterList, pid_t dcProcessID, DCProcessIDList** dCProcessIDList);
+void deleteDC(MasterList *masterList, pid_t dcProcessID);
 void updateDC(MasterList *masterList, pid_t dcProcessID);

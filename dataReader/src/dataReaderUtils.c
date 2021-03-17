@@ -12,9 +12,6 @@
 #include <sys/ipc.h>
 #include <sys/msg.h>
 #include <sys/shm.h>
-#include <signal.h>
-#include <unistd.h>
-
 #include "../../common/inc/hoochamacallit.h"
 #include "../../common/inc/masterList.h"
 #include "../inc/dataReader.h"
@@ -124,19 +121,3 @@ int createSharedMemory()
 
 // 	printf("aa:%d\n count:%d\n", *DCProcessIDList, *listCounter);
 // }
-
-
-
-/*
-	Name	: alarmHandler(int sigNum)
-	Purpose : This function is used to check if any of DCs have not sent messages to DR 
-	          within 35seconds, and remove them from the master list.
-	Inputs	: None
-	Outputs	: None
-	Returns	: int shmID  -  Shared memory ID
-*/
-void alarmHandler(int sigNum)
-{
-	printf("signum??:%d\n", sigNum);
-	alarm(2);
-}

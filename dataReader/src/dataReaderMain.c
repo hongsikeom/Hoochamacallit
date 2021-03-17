@@ -11,28 +11,35 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
-#include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/msg.h>
 #include <sys/shm.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <signal.h>
+
 #include "../../common/inc/hoochamacallit.h"
 #include "../../common/inc/masterList.h"
 #include "../inc/dataReader.h"
 #include "../inc/dcProcessIDList.h"
 // #include "../inc/semaphoreStruct.h"
 
-#include <time.h>
-#include <signal.h>
+
+
+
+
+
+void alarmHandler(int sigNum);            // alarmHandler function prototype
+	
+MasterList *masterList = NULL;    		  // MasterList
 
 
 void main(int argc, char *argv[])
 {
 	int qID = -1;       				      // Message queue ID
 	int shmID = -1;     				   	  // Shared memory ID
-	int msgRun = 1;     					  // For loop	
-	MasterList *masterList = NULL;    		  // MasterList
-	DCProcessIDList *DCProcessIDList = NULL;  // DC ProcessIDList (It will hold the ProcessIDs that have been 
+	int msgRun = 1;     					  // For loop
+	DCProcessIDList *DCProcessIDList = NULL;  // DC ProcessIDList (It will hold the ProcessIDs that have been 	
 											  // connnected to ther server and left)
 	
 
@@ -77,39 +84,39 @@ void main(int argc, char *argv[])
 	//======================================================================================================
 	
 
-	int check = 0;
+	// int check = 0;
 
-	check = addDCprocessID(&DCProcessIDList, 111);
-	if(check != SUCCESS) {
-		printf("already exists\n");
-	}
+	// check = addDCprocessID(&DCProcessIDList, 111);
+	// if(check != SUCCESS) {
+	// 	printf("already exists\n");
+	// }
 	
-	check = addDCprocessID(&DCProcessIDList, 222);
-	if(check != SUCCESS) {
-		printf("already exists\n");
-	}
+	// check = addDCprocessID(&DCProcessIDList, 222);
+	// if(check != SUCCESS) {
+	// 	printf("already exists\n");
+	// }
 
-	check = addDCprocessID(&DCProcessIDList, 111);
-	if(check != SUCCESS) {
-		printf("already exists\n");
-	}
+	// check = addDCprocessID(&DCProcessIDList, 111);
+	// if(check != SUCCESS) {
+	// 	printf("already exists\n");
+	// }
 
-	check = addDCprocessID(&DCProcessIDList, 333);
-	if(check != SUCCESS) {
-		printf("already exists\n");
-	}
+	// check = addDCprocessID(&DCProcessIDList, 333);
+	// if(check != SUCCESS) {
+	// 	printf("already exists\n");
+	// }
 
-	check = addDCprocessID(&DCProcessIDList, 111);
-	if(check != SUCCESS) {
-		printf("already exists\n");
-	}
+	// check = addDCprocessID(&DCProcessIDList, 111);
+	// if(check != SUCCESS) {
+	// 	printf("already exists\n");
+	// }
 
-	check = addDCprocessID(&DCProcessIDList, 333);
-	if(check != SUCCESS) {
-		printf("already exists\n");
-	}
+	// check = addDCprocessID(&DCProcessIDList, 333);
+	// if(check != SUCCESS) {
+	// 	printf("already exists\n");
+	// }
 
-	printList(DCProcessIDList);
+	// printList(DCProcessIDList);
 
 
 	//======================================================================================================
@@ -124,9 +131,9 @@ void main(int argc, char *argv[])
 	// // MasterList Update Delete Test=============================================================================
 	// //======================================================================================================
 
-	// updateDC(masterList, 455);
-	// updateDC(masterList, 452);
-	// updateDC(masterList, 459);
+	updateDC(masterList, 455);
+	updateDC(masterList, 452);
+	updateDC(masterList, 459);
 
 	// printf("\nThe number of DCs in the Master List = %d\n", masterList->numberOfDCs);
 	
@@ -150,7 +157,8 @@ void main(int argc, char *argv[])
 
 	// Signal handler
 	signal(SIGALRM, alarmHandler);
-	alarm(2);
+	alarm(35);
+	
 
 	// Listening messages from DCs
 	while (msgRun == 1)
@@ -158,7 +166,7 @@ void main(int argc, char *argv[])
 		printf("Waiting for messages...\n");
 		fflush(stdout);
 
-		msgRun = 0;
+		// msgRun = 0;
 		sleep(1.5);
 	}
 
@@ -170,4 +178,32 @@ void main(int argc, char *argv[])
 	shmctl(shmID, IPC_RMID, 0);
 
 	return;
+}
+
+
+
+/*
+	Name	: alarmHandler(int sigNum)
+	Purpose : This function is used to check if any of DCs have not sent messages to DR 
+	          within 35seconds, and remove them from the master list.
+	Inputs	: None
+	Outputs	: None
+	Returns	: int shmID  -  Shared memory ID
+*/
+void alarmHandler(int sigNum)
+{
+	// Get the current time
+    struct timeval currentTime;
+    gettimeofday(&currentTime, NULL);
+
+	for (int i = 0; i < masterList->numberOfDCs; i++) {
+		long timeDifferent = currentTime.tv_sec - masterList->dc[i].lastTimeHeardFrom;
+		printf("\n\nChecking LAST HEARD OF TIME!==========================================\n");
+		printf("DC[%d]'s last-heard-time: %ld\nCurrent time: %ld\nTime Difference: %ld\n", i, masterList->dc[i].lastTimeHeardFrom, currentTime.tv_sec, timeDifferent);
+		printf("\nEnd checking LAST HEARD OF TIME!==========================================\n\n");
+		if (timeDifferent > 35) {
+			printf("It will be deleted");
+		}
+	}
+	alarm(35);
 }
