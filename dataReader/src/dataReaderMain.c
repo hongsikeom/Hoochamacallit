@@ -1,10 +1,11 @@
 /* ===============================================================================
-* FILE : encodeInput.c
-* PROJECT : SENG2330 - Assignment 2
+* FILE : dataReaderMain.c
+* PROJECT : SENG2330 - Assignment 3
 * PROGRAMMER : Hongsik Eom and Janeth Santos
-* FIRST VERSION : February 14,2021
-* DESCRIPTION :
-* 
+* FIRST VERSION : March 29,2021
+* DESCRIPTION : This file creates the mesage queue and shared memory space to receive
+* messages from DCs and processes them. When MasterList does not contain any DCs then
+* exits the program.
 * ================================================================================*/
 
 #include <stdio.h>
@@ -27,12 +28,12 @@
 
 void main(int argc, char *argv[])
 {
-	int qID = -1;       // Message queue ID
-	int shmID = -1;     // Shared memory ID
-	int msgRun = 1;     // For loop
-	int listCounter = 0;
-	MasterList *masterList = NULL;    // MasterList
-	DCProcessIDList *DCProcessIDList = NULL;  // DC ProcessIDList
+	int qID = -1;       				      // Message queue ID
+	int shmID = -1;     				   	  // Shared memory ID
+	int msgRun = 1;     					  // For loop	
+	MasterList *masterList = NULL;    		  // MasterList
+	DCProcessIDList *DCProcessIDList = NULL;  // DC ProcessIDList (It will hold the ProcessIDs that have been 
+											  // connnected to ther server and left)
 	
 
 	// Create Message Queue
@@ -146,9 +147,12 @@ void main(int argc, char *argv[])
 	// // MasterList Deletion END =============================================================================
 	// //======================================================================================================
 
+
+	// Signal handler
 	signal(SIGALRM, alarmHandler);
 	alarm(2);
 
+	// Listening messages from DCs
 	while (msgRun == 1)
 	{
 		printf("Waiting for messages...\n");
@@ -161,9 +165,9 @@ void main(int argc, char *argv[])
 	// Close the DR and free the message queue and shared memory
 	printf("Data Reader is closed\n");
 	DCProcessIDList = freeDCProcessIDList(DCProcessIDList);
-	shmdt(masterList);
-
 	msgctl(qID, IPC_RMID, (struct msqid_ds *)NULL);
+	shmdt(masterList);
 	shmctl(shmID, IPC_RMID, 0);
+
 	return;
 }

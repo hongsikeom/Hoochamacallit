@@ -1,10 +1,10 @@
 /* ===============================================================================
-* FILE : encodeInput.h
-* PROJECT : SENG2330 - Assignment 2
+* FILE : dataReader.h
+* PROJECT : SENG2330 - Assignment 3
 * PROGRAMMER : Hongsik Eom and Janeth Santos
-* FIRST VERSION : March 14,2021
+* FIRST VERSION : March 29,2021
 * DESCRIPTION :
-* this include file contains the necessary prototypes and constants for the encodeInput application
+* this include file contains the necessary prototypes for the dataReader application
 * ================================================================================*/
 
 
@@ -12,4 +12,4 @@
 int createMessageQueue();
 int createSharedMemory();
 void alarmHandler(int sigNum);
-void checkDCProcessID(pid_t *DCProcessIDList, int *listCounter, pid_t DCprocessID);
+// void checkDCProcessID(pid_t *DCProcessIDList, int *listCounter, pid_t DCprocessID);

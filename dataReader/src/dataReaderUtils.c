@@ -1,10 +1,9 @@
 /* ===============================================================================
-* FILE : encodeInput.c
-* PROJECT : SENG2330 - Assignment 2
+* FILE : dataReaderUtils.c
+* PROJECT : SENG2330 - Assignment 3
 * PROGRAMMER : Hongsik Eom and Janeth Santos
-* FIRST VERSION : February 14,2021
-* DESCRIPTION :
-* 
+* FIRST VERSION : March 29,2021
+* DESCRIPTION : This file contains the methods that supports dataReader application.
 * ================================================================================*/
 
 #include <stdio.h>
@@ -21,8 +20,18 @@
 #include "../inc/dataReader.h"
 #include "../inc/semaphoreStruct.h"
 
+
+
+/*
+	Name	: createMessageQueue()
+	Purpose : This function is used to create message queue to receive messages from DCs
+	Inputs	: None
+	Outputs	: None
+	Returns	: int qID  -  Message queue ID
+*/
 int createMessageQueue()
 {
+	// Message key and Queue ID
 	key_t msgKey;
 	int qID = -1;
 
@@ -47,11 +56,20 @@ int createMessageQueue()
 	return qID;
 }
 
+
+
+/*
+	Name	: createSharedMemory()
+	Purpose : This function is used to create shared memory space to store DCs information
+	Inputs	: None
+	Outputs	: None
+	Returns	: int shmID  -  Shared memory ID
+*/
 int createSharedMemory()
 {
+	// Shared memory key and ID
 	key_t shmem_key;
 	int shmID = -1;
-	MasterList *p;
 
 	// Check the message queue ID
 	if ((shmID = shmget(shmem_key, sizeof(MasterList), 0)) == -1)
@@ -64,47 +82,59 @@ int createSharedMemory()
 	return shmID;
 }
 
-void checkDCProcessID(pid_t *DCProcessIDList, int *listCounter, pid_t DCprocessID)
-{
-	printf("start??");
-	pid_t *newList = NULL;
 
-	if (*listCounter == 0)
-	{
-		DCProcessIDList = (pid_t *)malloc(sizeof(pid_t));
-		DCProcessIDList = &DCprocessID;
-		*listCounter += 4;
-	}
-	else
-	{
-		int index = 0;
-		int isItInTheList = -1;
-		while (index < *listCounter)
-		{
-			DCProcessIDList += index;
 
-			if (*DCProcessIDList == DCprocessID)
-			{
-				isItInTheList = 1;
-				break;
-			}
-			index += 4;
-		}
+// void checkDCProcessID(pid_t *DCProcessIDList, int *listCounter, pid_t DCprocessID)
+// {
+// 	printf("start??");
+// 	pid_t *newList = NULL;
 
-		if (isItInTheList = -1)
-		{
-			*listCounter += 4;
+// 	if (*listCounter == 0)
+// 	{
+// 		DCProcessIDList = (pid_t *)malloc(sizeof(pid_t));
+// 		DCProcessIDList = &DCprocessID;
+// 		*listCounter += 4;
+// 	}
+// 	else
+// 	{
+// 		int index = 0;
+// 		int isItInTheList = -1;
+// 		while (index < *listCounter)
+// 		{
+// 			DCProcessIDList += index;
 
-			newList = (pid_t *)realloc(DCProcessIDList, sizeof(pid_t) * *listCounter);
-			DCProcessIDList = newList;
+// 			if (*DCProcessIDList == DCprocessID)
+// 			{
+// 				isItInTheList = 1;
+// 				break;
+// 			}
+// 			index += 4;
+// 		}
 
-			DCProcessIDList = &DCprocessID;
-		}
-	}
+// 		if (isItInTheList = -1)
+// 		{
+// 			*listCounter += 4;
 
-	printf("aa:%d\n count:%d\n", *DCProcessIDList, *listCounter);
-}
+// 			newList = (pid_t *)realloc(DCProcessIDList, sizeof(pid_t) * *listCounter);
+// 			DCProcessIDList = newList;
 
+// 			DCProcessIDList = &DCprocessID;
+// 		}
+// 	}
+
+// 	printf("aa:%d\n count:%d\n", *DCProcessIDList, *listCounter);
+// }
+
+
+
+/*
+	Name	: alarmHandler(int sigNum)
+	Purpose : This function is used to check if any of DCs have not sent messages to DR 
+	          within 35seconds, and remove them from the master list.
+	Inputs	: None
+	Outputs	: None
+	Returns	: int shmID  -  Shared memory ID
+*/
 void alarmHandler(int sigNum)
 {
 	printf("signum??:%d\n", sigNum);

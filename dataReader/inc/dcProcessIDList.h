@@ -1,10 +1,11 @@
 /* ===============================================================================
-* FILE : encodeInput.h
-* PROJECT : SENG2330 - Assignment 2
+* FILE : dcProcessIDList.h
+* PROJECT : SENG2330 - Assignment 3
 * PROGRAMMER : Hongsik Eom and Janeth Santos
-* FIRST VERSION : February 14,2021
-* DESCRIPTION :
-* this include file contains the necessary prototypes and constants for the encodeInput application
+* FIRST VERSION : March 29,2021
+* DESCRIPTION : This include file contains the necessary constants and prototypes 
+* for the DCProcessIDList. DCProcessIDList keeps the DCs process ID, which have 
+* been connected to the DR and left, and it is used for filtering DCs.
 * ================================================================================*/
 
 
@@ -27,6 +28,7 @@ extern struct DCProcessIDList DCProcessIDList;
 
 #endif
 
+// Prototypes
 int addDCprocessID(DCProcessIDList **pHead, pid_t dcProcessID);
 int findDCprocessID(DCProcessIDList *pHead, pid_t dcProcessID);
 DCProcessIDList *freeDCProcessIDList(DCProcessIDList *pHead);
