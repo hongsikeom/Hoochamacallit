@@ -14,6 +14,10 @@
 // Constants
 #define MAX_DC_ROLES 10
 #define OUT_OF_DC_INDEX -1
+#define FOUND        1
+#define NOT_FOUND   -1
+#define ERROR       -2
+#define SUCCESS      2
 
 
 // MasetrList and DCInfo struct
@@ -31,13 +35,25 @@ typedef struct
 	DCInfo dc[MAX_DC_ROLES];
 } MasterList;
 
+typedef struct DCProcessIDList{
+    pid_t dcProcessID;
+	struct DCProcessIDList* next;
+} DCProcessIDList;
+
 #else
 
 extern struct DCInfo DCInfo;
 extern struct MasterList MasterList;
+extern struct DCProcessIDList DCProcessIDList;
 
 #endif
 
 // Prototypes
 void deleteDC(MasterList *masterList, pid_t dcProcessID);
 void updateDC(MasterList *masterList, pid_t dcProcessID);
+DCProcessIDList *checkLastHeardFrom(MasterList *masterList, long currentTime, DCProcessIDList *dcProcessIDList);
+
+int addDCprocessID(DCProcessIDList **pHead, pid_t dcProcessID);
+int findDCprocessID(DCProcessIDList *pHead, pid_t dcProcessID);
+DCProcessIDList *freeDCProcessIDList(DCProcessIDList *pHead);
+void printList(DCProcessIDList *pHead);
