@@ -10,6 +10,7 @@
 
 #define     RUN     1
 #define     STOP    0
+#define     SHMKEY  16535
 
 // Function prototypes
 int createMessageQueue();

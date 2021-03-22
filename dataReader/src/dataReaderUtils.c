@@ -68,7 +68,7 @@ int createSharedMemory()
 	key_t shmem_key;
 	int shmID = 0;
 
-	shmem_key = ftok (".", 'M');
+	shmem_key = ftok (".", SHMKEY);
 
 	// If ftok fails
 	if (shmem_key == -1) {
