@@ -17,7 +17,8 @@
 #include <sys/shm.h>
 #include <unistd.h>
 
-#include "../../common/inc/hoochamacallit.h"
+
+#include "../../common/inc/message_struct.h"
 #include "../../common/inc/masterList.h"
 #include "../inc/dataReader.h"
 // #include "../inc/semaphoreStruct.h"
@@ -30,10 +31,14 @@ void main(int argc, char *argv[])
 	int qID = -1;       				      // Message queue ID
 	int shmID = -1;     				   	  // Shared memory ID
 	int msgRun = 1;     					  // For loop
+	int sizeOfData = 0;						  // Size of messagea from the DC
+	int rc = 0;								  // Retrun code from message processing
+	int checkProcessID = 0;                   // Check the process id in the DCProcessIDList
 
 	struct timeval currentTimeStruct;               // Current time
 	long currentTime;
 	MasterList *masterList = NULL;    		  // MasterList
+	MESSAGECONTENT *messageFromDC = NULL;
 	DCProcessIDList *dcProcessIDList = NULL;  // DC ProcessIDList (It will hold the ProcessIDs that have been 	
 											  // connnected to ther server and left)
 	
@@ -76,66 +81,35 @@ void main(int argc, char *argv[])
 	printf("============================================\n\n");
 
 	
-
-
-	// //======================================================================================================
-	// // MasterList Update
-	// //======================================================================================================
-
-	updateDC(masterList, 455);
-	updateDC(masterList, 552);
-	updateDC(masterList, 659);
-	updateDC(masterList, 759);
-	updateDC(masterList, 859);
-
-	int checkID = 0;
-
 	// Listening messages from DCs
-	while (msgRun == 1)
+	while (msgRun == RUN)
 	{
 		printf("Waiting for messages...\n");
 		fflush(stdout);
 
+		// Getting message from the DC
+		rc = msgrcv (qID, (void *)&messageFromDC, sizeof(MESSAGECONTENT), 0, 0);
+		if (rc == -1) { break; }
+
+		printf ("\n\n(SERVER) Received: PID: %d\n(SERVER) Received: MSG CODE: %d\n\n", messageFromDC->machinePID, messageFromDC->message_code);
+
+		// Check if the DCs process ID is in the DCProcessIDList (It has already been connected to the DR and left) 
+		if ((checkProcessID = findDCprocessID(dcProcessIDList, messageFromDC->machinePID)) == FOUND) { continue; }
+		
+		// Update the DC to the master list
+		updateDC(masterList, messageFromDC->machinePID);
+
+		// Check the message from the DC
+		checkMessageFromDC(masterList ,messageFromDC->message_code, messageFromDC->machinePID);
+		
+		// Get the current time in seconds
 		gettimeofday(&currentTimeStruct, NULL);	
 		currentTime = currentTimeStruct.tv_sec;
+
+		// Check if the DC has not sent any messages more than 35seconds to the DR
 		dcProcessIDList = checkLastHeardFrom(masterList, currentTime, dcProcessIDList);
-
-		if (currentTime > 36) {
-			printf("\n\n\n=====start to check===\n");
-			checkID =findDCprocessID(dcProcessIDList, 455);
-			if (checkID == 1) {
-				printf("Found\n");
-			} else {
-				printf("NOT FOUND\n");
-			}
-			checkID =findDCprocessID(dcProcessIDList, 552);
-			if (checkID == 1) {
-				printf("Found\n");
-			} else {
-				printf("NOT FOUND\n");
-			}
-			checkID =findDCprocessID(dcProcessIDList, 659);
-			if (checkID == 1) {
-				printf("Found\n");
-			} else {
-				printf("NOT FOUND\n");
-			}
-			checkID =findDCprocessID(dcProcessIDList, 759);
-			if (checkID == 1) {
-				printf("Found\n");
-			} else {
-				printf("NOT FOUND\n");
-			}
-			checkID =findDCprocessID(dcProcessIDList, 859);
-			if (checkID == 1) {
-				printf("Found\n");
-			} else {
-				printf("NOT FOUND\n");
-			}
-		}
 		
-
-		// msgRun = 0;
+		// msgRun = STOP;
 		sleep(1.5);
 	}
 

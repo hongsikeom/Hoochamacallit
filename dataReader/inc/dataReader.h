@@ -8,6 +8,9 @@
 * ================================================================================*/
 
 
+#define     RUN     1
+#define     STOP    0
+
 // Function prototypes
 int createMessageQueue();
 int createSharedMemory();

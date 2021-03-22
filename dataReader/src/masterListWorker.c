@@ -26,8 +26,11 @@
 	Outputs	: None
 	Returns	: None
 */
-void deleteDC(MasterList *masterList, pid_t dcProcessID)
+DCProcessIDList * deleteDC(MasterList *masterList, pid_t dcProcessID, DCProcessIDList *dcProcessIDList)
 {
+    // Add process ID to the DCProcessIDList
+    addDCprocessID(&dcProcessIDList, masterList->dc[i].dcProcessID);
+
     // Check the process ID from the DCInfo array
     for (int i = 0; i < masterList->numberOfDCs; i++)
     {
@@ -57,6 +60,8 @@ void deleteDC(MasterList *masterList, pid_t dcProcessID)
             masterList->numberOfDCs -= 1;
         }
     }
+
+    return dcProcessIDList;
 }
 
 
@@ -95,6 +100,37 @@ void updateDC(MasterList *masterList, pid_t dcProcessID)
 
     printf("\nThe New DCs index = %d\nThe new DCs processID = %d\n The New DCs lastTimeHeardFrom = %ld\n\n",
            masterList->numberOfDCs, masterList->dc[newIndex].dcProcessID, masterList->dc[newIndex].lastTimeHeardFrom);
+}
+
+
+
+void checkMessageFromDC(MasterList *masterList ,int messageNum, pid_t processID) {
+    switch (messageNum)
+    {
+        case EVERYTHING_OK:
+            break;
+        case HYDRAULIC_PRESSURE_FAIL:
+            break;
+        case SAFETY_BTN_FAIL:
+            break;
+        case NO_RAW_MATERIAL:
+            break;
+        case OPERATION_TMP_OUT_RANGE:
+            break;
+        case OPERATOR_ERROR:
+            break;
+        case MACHINE_OFFLINE:
+            deleteDC(masterList, processID);
+            break;
+        default:
+            break;  
+    }
+    printf("===============================Checking after checkMessageFromDC function call=============================");
+    printf("The process ID that will be deleted: %d\n", processID);
+    for (int i = 0; i < masterList->numberOfDCs; i++){
+        printf("\nProcessID in the list: %d\n", masterList->numberOfDCs);
+    }
+    printf("===============================Checking after checkMessageFromDC function call=============================");
 }
 
 

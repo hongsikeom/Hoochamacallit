@@ -24,7 +24,7 @@
 
 //Constants
 #define CHECK_MSG_QUEUE     0           //value to check existance of queue 
-#define KEY_ID              16535       //key id to create message queue Key using ftok()
+#define KEY_ID              'A'       //key id to create message queue Key using ftok()
 #define ERROR_OCCURED       -1          //return value from function when error occurs
 #define DC_CHK_Q_TIMER      10          //timer in seconds between checks if msg Queue doesnt exists 
 #define MIN_SEND_TIMER      10          //minimum timer in seconds for sending message
