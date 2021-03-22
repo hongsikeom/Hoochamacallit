@@ -125,13 +125,13 @@ void main(int argc, char *argv[])
 		gettimeofday(&currentTimeStruct, NULL);
 		startTime = currentTimeStruct.tv_sec;
 
-		printf("\n\n(SERVER) Received: PID: %d\n(SERVER) Received: MSG CODE: %ld\n\n", messageFromDC.machinePID, messageFromDC.message_code);
+		printf("\n\n(SERVER) Received: PID: %ld\n(SERVER) Received: MSG CODE: %d\n\n", messageFromDC.machinePID, messageFromDC.message_code);
 		fflush(stdout);
 		
 
 		// Check if the DCs process ID is in the DCProcessIDList (It has already been connected to the DR and left)
 		if ((checkProcessID = findDCprocessID(dcProcessIDList, messageFromDC.machinePID)) == FOUND) { 
-			printf("%d is found will continue\n", messageFromDC.machinePID);
+			printf("%ld is found will continue\n", messageFromDC.machinePID);
 			continue; 
 		}
 

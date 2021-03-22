@@ -40,7 +40,7 @@ while(msg.message_code != MACHINE_OFFLINE){
     srand(time(0));
 
     if (firstMsg == 0) {
-        msg.message_code = 1;
+        msg.message_code = 0;
         firstMsg++;
     } else {
         msg.message_code = getRandomMsgStatus();

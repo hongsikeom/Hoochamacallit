@@ -28,7 +28,7 @@
 	Outputs	: None
 	Returns	: None
 */
-DCProcessIDList * deleteDC(MasterList *masterList, pid_t dcProcessID, DCProcessIDList *dcProcessIDList)
+DCProcessIDList * deleteDC(MasterList *masterList, long dcProcessID, DCProcessIDList *dcProcessIDList)
 {
     // Add process ID to the DCProcessIDList
     addDCprocessID(&dcProcessIDList, dcProcessID);
@@ -63,7 +63,7 @@ DCProcessIDList * deleteDC(MasterList *masterList, pid_t dcProcessID, DCProcessI
 	Outputs	: None
 	Returns	: None
 */
-void updateDC(MasterList *masterList, pid_t dcProcessID)
+void updateDC(MasterList *masterList, long dcProcessID)
 {
     // If the number of DCs in the list is greater than or equal to 10,
     // it does not add it to the list and exit the function
@@ -89,7 +89,7 @@ void updateDC(MasterList *masterList, pid_t dcProcessID)
 }
 
 
-void updateDCsLastHeardFrom(MasterList *masterList, pid_t dcProcessID, long currentTime)
+void updateDCsLastHeardFrom(MasterList *masterList, long dcProcessID, long currentTime)
 {
     for (int i = 0; i < masterList->numberOfDCs; i++){
         if (masterList->dc[i].dcProcessID == dcProcessID)
@@ -102,7 +102,7 @@ void updateDCsLastHeardFrom(MasterList *masterList, pid_t dcProcessID, long curr
 
 
 
-DCProcessIDList * checkMessageFromDC(MasterList *masterList , DCProcessIDList *dcProcessIDList, int messageNum, pid_t processID) {
+DCProcessIDList * checkMessageFromDC(MasterList *masterList , DCProcessIDList *dcProcessIDList, int messageNum, long processID) {
     switch (messageNum)
     {
         case EVERYTHING_OK:
@@ -124,7 +124,7 @@ DCProcessIDList * checkMessageFromDC(MasterList *masterList , DCProcessIDList *d
             printf("OPERATOR_ERROR\n");
             break;
         case MACHINE_OFFLINE:
-            printf("%d will be deleted: RECEIVING MESSAGE MACHINE_OFFLINE\n", processID);
+            printf("%ld will be deleted: RECEIVING MESSAGE MACHINE_OFFLINE\n", processID);
             dcProcessIDList = deleteDC(masterList, processID, dcProcessIDList);
             break;
         default:
@@ -159,7 +159,7 @@ DCProcessIDList *checkLastHeardFrom(MasterList *masterList, long currentTime, DC
 }
 
 
-int checkPIDFromMasterList(MasterList *masterList, pid_t processID)
+int checkPIDFromMasterList(MasterList *masterList, long processID)
 {
     for (int i = 0; i < masterList->numberOfDCs; i++) {
         if (masterList->dc[i].dcProcessID == processID) {
@@ -180,7 +180,7 @@ int checkPIDFromMasterList(MasterList *masterList, pid_t processID)
               int ERROR  -  Error has occurred when allocating space for the DCProcessIDList
               int FOUND  -  DC's process ID is already in the list.
 */
-int addDCprocessID(DCProcessIDList **pHead, pid_t dcProcessID)
+int addDCprocessID(DCProcessIDList **pHead, long dcProcessID)
 {
     // Check if the DC's process ID is already in the DCProcessIDList
     int IDcheck = findDCprocessID(*pHead, dcProcessID);
@@ -221,7 +221,7 @@ int addDCprocessID(DCProcessIDList **pHead, pid_t dcProcessID)
 	Returns	: int FOUND  -  DC's process ID is already in the DCProcessIDList
               int NOT_FOUND  -  DC's process ID is not in the DCProcessIDList
 */
-int findDCprocessID(DCProcessIDList *pHead, pid_t dcProcessID)
+int findDCprocessID(DCProcessIDList *pHead, long dcProcessID)
 {
     // Get the head
     DCProcessIDList *current = pHead;

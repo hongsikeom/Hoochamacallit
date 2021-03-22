@@ -50,9 +50,9 @@ int checkMsgQueue(){
 //create function that randomly creates message status
 //need to call srand(time(NULL));  before calling this function in main
 // original = https://www.geeksforgeeks.org/generating-random-number-range-c/
-long getRandomMsgStatus(){
+int getRandomMsgStatus(){
 
-    long result = INI_VALUE, lower = MIN_STATUS_MSG, upper = MAX_STATUS_MSG; 
+    int result = INI_VALUE, lower = MIN_STATUS_MSG, upper = MAX_STATUS_MSG; 
 
     result = (rand() % (upper - lower + 1)) + lower; 
 
@@ -61,7 +61,7 @@ long getRandomMsgStatus(){
 
 
 //populate msg description
-void getMsgCodeDescription(char* pStrDescription, long RandomMsgStatus){
+void getMsgCodeDescription(char* pStrDescription, int RandomMsgStatus){
 
     switch (RandomMsgStatus)
     {

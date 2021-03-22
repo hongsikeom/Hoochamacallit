@@ -14,9 +14,9 @@
 
 typedef struct MSG_CONTENT
 {
-	long message_code;
+	long machinePID;
 	char msgDescription[MSG_LEN];
-	pid_t machinePID;
+	int message_code;
 	
 } MESSAGECONTENT;
 

@@ -39,6 +39,6 @@
 
 //Function Prototypes
 int checkMsgQueue();
-long getRandomMsgStatus();
+int getRandomMsgStatus();
 int getRandomTimer();
-void getMsgCodeDescription(char* pStrDescription, long RandomMsgStatus);
+void getMsgCodeDescription(char* pStrDescription, int RandomMsgStatus);
