@@ -29,6 +29,7 @@ void main(int argc, char *argv[]){
 
     printf("\n queue ID: %d\n", msgQID);
     printf("\n pID ID: %d\n", myPid);
+    int firstMsg = 0;
 
 while(msg.message_code != MACHINE_OFFLINE){
 
@@ -38,7 +39,14 @@ while(msg.message_code != MACHINE_OFFLINE){
     //printf("msgPID = %d\n", msg.machinePID);
     srand(time(0));
 
-    msg.message_code = getRandomMsgStatus();
+    if (firstMsg == 0) {
+        msg.message_code = 1;
+        firstMsg++;
+    } else {
+        msg.message_code = getRandomMsgStatus();
+        firstMsg++;
+    }
+
     //printf("MsgStatus = %ld\n", msg.message_code);
     getMsgCodeDescription(msg.msgDescription, msg.message_code);
     printf("MsgStatus description = %s\n", msg.msgDescription);
@@ -51,7 +59,7 @@ while(msg.message_code != MACHINE_OFFLINE){
 
     printf("message code: %ld\n", msg.message_code);
     msgsnd(msgQID, (void*)&msg,msgSize, 0);
-
+    printf("timer: %d\n", sendTimer);
     sleep(sendTimer);
 
     

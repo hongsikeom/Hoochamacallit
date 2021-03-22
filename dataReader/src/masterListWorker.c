@@ -30,9 +30,6 @@
 */
 DCProcessIDList * deleteDC(MasterList *masterList, pid_t dcProcessID, DCProcessIDList *dcProcessIDList)
 {
-    for (int i = 0; i < masterList->numberOfDCs; i++) {
-        printf("Before removed %d\tNumDC: %d\tDc: %d\n", dcProcessID, masterList->numberOfDCs, masterList->dc[i].dcProcessID);
-    }
     // Add process ID to the DCProcessIDList
     addDCprocessID(&dcProcessIDList, dcProcessID);
 
@@ -53,11 +50,6 @@ DCProcessIDList * deleteDC(MasterList *masterList, pid_t dcProcessID, DCProcessI
             masterList->numberOfDCs -= 1;
         }
     }
-
-    for (int i = 0; i < masterList->numberOfDCs; i++) {
-        printf("After removed %d\tNumDC: %d\tDc: %d\n", dcProcessID, masterList->numberOfDCs, masterList->dc[i].dcProcessID);
-    }
-
     return dcProcessIDList;
 }
 
@@ -103,6 +95,7 @@ void updateDCsLastHeardFrom(MasterList *masterList, pid_t dcProcessID, long curr
         if (masterList->dc[i].dcProcessID == dcProcessID)
         {
             masterList->dc[i].lastTimeHeardFrom = currentTime;
+            printf("%d's lastTimeHeardFrom is updated to : %ld\n", masterList->dc[i].dcProcessID, masterList->dc[i].lastTimeHeardFrom);
         }
     }
 }
@@ -113,16 +106,22 @@ DCProcessIDList * checkMessageFromDC(MasterList *masterList , DCProcessIDList *d
     switch (messageNum)
     {
         case EVERYTHING_OK:
+            printf("EVERYTHING_OK\n");
             break;
         case HYDRAULIC_PRESSURE_FAIL:
+            printf("HYDRAULIC_PRESSURE_FAIL\n");
             break;
         case SAFETY_BTN_FAIL:
+            printf("SAFETY_BTN_FAIL\n");
             break;
         case NO_RAW_MATERIAL:
+            printf("NO_RAW_MATERIAL\n");
             break;
         case OPERATION_TMP_OUT_RANGE:
+            printf("OPERATION_TMP_OUT_RANGE\n");
             break;
         case OPERATOR_ERROR:
+            printf("OPERATOR_ERROR\n");
             break;
         case MACHINE_OFFLINE:
             printf("%d will be deleted: RECEIVING MESSAGE MACHINE_OFFLINE\n", processID);

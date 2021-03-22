@@ -111,7 +111,6 @@ void main(int argc, char *argv[])
 		}
 
 		// Getting message from the DC
-		// rc = msgrcv (qID, (void *)&messageFromDC, sizeof(MESSAGECONTENT) - sizeof(long), -1, IPC_NOWAIT);
 		rc = msgrcv (qID, (void *)&messageFromDC, sizeof(MESSAGECONTENT) - sizeof(long), 0, IPC_NOWAIT);
 		if (rc == -1) { 
 			int errsv = errno;
@@ -132,6 +131,7 @@ void main(int argc, char *argv[])
 
 		// Check if the DCs process ID is in the DCProcessIDList (It has already been connected to the DR and left)
 		if ((checkProcessID = findDCprocessID(dcProcessIDList, messageFromDC.machinePID)) == FOUND) { 
+			printf("%d is found will continue\n", messageFromDC.machinePID);
 			continue; 
 		}
 
