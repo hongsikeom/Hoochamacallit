@@ -12,6 +12,7 @@
 #include <sys/time.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <errno.h>
 #include "../../common/inc/message_struct.h"
 #include "../../common/inc/masterList.h"
 
@@ -29,6 +30,7 @@
 DCProcessIDList * deleteDC(MasterList *masterList, pid_t dcProcessID, DCProcessIDList *dcProcessIDList)
 {
     printf("The process ID that will be deleted: %d\n", dcProcessID);
+    fflush(stdout);
     // Add process ID to the DCProcessIDList
     addDCprocessID(&dcProcessIDList, dcProcessID);
 
@@ -107,7 +109,6 @@ void updateDCsLastHeardFrom(MasterList *masterList, pid_t dcProcessID, long curr
         if (masterList->dc[i].dcProcessID == dcProcessID)
         {
             masterList->dc[i].lastTimeHeardFrom = currentTime;
-            printf("%d's lastTimeHeardFrom is updated to : %ld\n", masterList->dc[i].dcProcessID, masterList->dc[i].lastTimeHeardFrom);
         }
     }
 }
@@ -135,12 +136,6 @@ DCProcessIDList * checkMessageFromDC(MasterList *masterList , DCProcessIDList *d
         default:
             break;  
     }
-    printf("\n===============================Checking after checkMessageFromDC function call=============================\n");
-    
-    for (int i = 0; i < masterList->numberOfDCs; i++){
-        printf("\nProcessID in the list: %d\n", masterList->numberOfDCs);
-    }
-
     return dcProcessIDList;
 }
 
@@ -159,14 +154,11 @@ DCProcessIDList *checkLastHeardFrom(MasterList *masterList, long currentTime, DC
 {
 	for (int i = 0; i < masterList->numberOfDCs; i++) {
 		long timeDifferent = currentTime - masterList->dc[i].lastTimeHeardFrom;
-		printf("DC[%d]'s ID-%d  =  last-heard-time: %ld\nCurrent time: %ld\nTime Difference: %ld\n", i, masterList->dc[i].dcProcessID, masterList->dc[i].lastTimeHeardFrom, currentTime, timeDifferent);
 		if (timeDifferent > 35) {
-			printf("%d is deleted!\n", masterList->dc[i].dcProcessID);
             addDCprocessID(&dcProcessIDList, masterList->dc[i].dcProcessID);
 			dcProcessIDList = deleteDC(masterList, masterList->dc[i].dcProcessID, dcProcessIDList);
 			i--;
 		}
-		printf("\nNumber of dcs : %d\n", masterList->numberOfDCs);
 	}
     return dcProcessIDList;
 }

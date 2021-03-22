@@ -16,7 +16,7 @@
 #include <sys/msg.h>
 #include <sys/shm.h>
 #include <unistd.h>
-
+#include <errno.h>
 
 #include "../../common/inc/message_struct.h"
 #include "../../common/inc/masterList.h"
@@ -84,14 +84,21 @@ void main(int argc, char *argv[])
 	// Listening messages from DCs
 	while (msgRun == RUN)
 	{
-		printf("Waiting for messages...\nNumber of DC's now: %d", masterList->numberOfDCs);
+		printf("Waiting for messages...\n");
 		fflush(stdout);
 
+		for (int i = 0; i < masterList->numberOfDCs; i++){
+			printf("ProcessID in the list: %d\n", masterList->dc[i].dcProcessID);
+			fflush(stdout);
+    	}
+
 		// Getting message from the DC
+		// rc = msgrcv (qID, (void *)&messageFromDC, sizeof(MESSAGECONTENT) - sizeof(long), -1, IPC_NOWAIT);
 		rc = msgrcv (qID, (void *)&messageFromDC, sizeof(MESSAGECONTENT) - sizeof(long), 0, 0);
 		if (rc == -1) { break; }
 
 		printf("\n\n(SERVER) Received: PID: %d\n(SERVER) Received: MSG CODE: %ld\n\n", messageFromDC.machinePID, messageFromDC.message_code);
+		fflush(stdout);
 
 		// Get the current time in seconds
 		gettimeofday(&currentTimeStruct, NULL);	
@@ -105,11 +112,9 @@ void main(int argc, char *argv[])
 		// Update the DC to the master list
 		if (checkPIDFromMasterList(masterList, messageFromDC.machinePID) == NOT_FOUND) {
 			updateDC(masterList, messageFromDC.machinePID);
-			printf("%d is updated code: %ld\n",messageFromDC.machinePID, messageFromDC.message_code );
 		} else {
 			updateDCsLastHeardFrom(masterList, messageFromDC.machinePID, currentTime);
 		}
-		
 		
 		// Check the message from the DC
 		dcProcessIDList = checkMessageFromDC(masterList, dcProcessIDList, messageFromDC.message_code, messageFromDC.machinePID);
@@ -123,6 +128,7 @@ void main(int argc, char *argv[])
 
 	// Close the DR and free the message queue and shared memory
 	printf("Data Reader is closed\n");
+	fflush(stdout);
 	dcProcessIDList = freeDCProcessIDList(dcProcessIDList);
 	msgctl(qID, IPC_RMID, (struct msqid_ds *)NULL);
 	shmdt(masterList);
