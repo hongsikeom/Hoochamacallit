@@ -9,7 +9,6 @@
 * ================================================================================*/
 
 
-
 #include <sys/time.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -29,6 +28,7 @@
 */
 DCProcessIDList * deleteDC(MasterList *masterList, pid_t dcProcessID, DCProcessIDList *dcProcessIDList)
 {
+    printf("The process ID that will be deleted: %d\n", dcProcessID);
     // Add process ID to the DCProcessIDList
     addDCprocessID(&dcProcessIDList, dcProcessID);
 
@@ -98,9 +98,18 @@ void updateDC(MasterList *masterList, pid_t dcProcessID)
     // Assign DCs process ID and current time
     masterList->dc[newIndex].dcProcessID = dcProcessID;
     masterList->dc[newIndex].lastTimeHeardFrom = currentTime.tv_sec;
+}
 
-    printf("\nThe New DCs index = %d\nThe new DCs processID = %d\n The New DCs lastTimeHeardFrom = %ld\n\n",
-           masterList->numberOfDCs, masterList->dc[newIndex].dcProcessID, masterList->dc[newIndex].lastTimeHeardFrom);
+
+void updateDCsLastHeardFrom(MasterList *masterList, pid_t dcProcessID, long currentTime)
+{
+    for (int i = 0; i < masterList->numberOfDCs; i++){
+        if (masterList->dc[i].dcProcessID == dcProcessID)
+        {
+            masterList->dc[i].lastTimeHeardFrom = currentTime;
+            printf("%d's lastTimeHeardFrom is updated to : %ld\n", masterList->dc[i].dcProcessID, masterList->dc[i].lastTimeHeardFrom);
+        }
+    }
 }
 
 
@@ -126,12 +135,11 @@ DCProcessIDList * checkMessageFromDC(MasterList *masterList , DCProcessIDList *d
         default:
             break;  
     }
-    printf("===============================Checking after checkMessageFromDC function call=============================");
-    printf("The process ID that will be deleted: %d\n", processID);
+    printf("\n===============================Checking after checkMessageFromDC function call=============================\n");
+    
     for (int i = 0; i < masterList->numberOfDCs; i++){
         printf("\nProcessID in the list: %d\n", masterList->numberOfDCs);
     }
-    printf("===============================Checking after checkMessageFromDC function call=============================");
 
     return dcProcessIDList;
 }
@@ -161,6 +169,17 @@ DCProcessIDList *checkLastHeardFrom(MasterList *masterList, long currentTime, DC
 		printf("\nNumber of dcs : %d\n", masterList->numberOfDCs);
 	}
     return dcProcessIDList;
+}
+
+
+int checkPIDFromMasterList(MasterList *masterList, pid_t processID)
+{
+    for (int i = 0; i < masterList->numberOfDCs; i++) {
+        if (masterList->dc[i].dcProcessID == processID) {
+            return FOUND;
+        }
+    }
+    return NOT_FOUND;
 }
 
 

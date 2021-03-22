@@ -40,8 +40,9 @@ int createMessageQueue()
 		printf("Server cannot create key!\n");
 		fflush(stdout);
 		qID = -1;
+		return qID;
 	}
-
+	
 	// Check the message queue ID
 	if ((qID = msgget(msgKey, 0)) == -1)
 	{
@@ -73,6 +74,7 @@ int createSharedMemory()
 	// If ftok fails
 	if (shmem_key == -1) {
 		shmID = -1;
+		return shmID;
 	}
 
 	// Check the message queue ID

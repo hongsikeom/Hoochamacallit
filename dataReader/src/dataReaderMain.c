@@ -37,8 +37,8 @@ void main(int argc, char *argv[])
 
 	struct timeval currentTimeStruct;               // Current time
 	long currentTime;
-	MasterList *masterList = NULL;    		  // MasterList
-	MESSAGECONTENT *messageFromDC = NULL;
+	MasterList *masterList;    		  // MasterList
+	MESSAGECONTENT messageFromDC;
 	DCProcessIDList *dcProcessIDList = NULL;  // DC ProcessIDList (It will hold the ProcessIDs that have been 	
 											  // connnected to ther server and left)
 	
@@ -84,27 +84,35 @@ void main(int argc, char *argv[])
 	// Listening messages from DCs
 	while (msgRun == RUN)
 	{
-		printf("Waiting for messages...\n");
+		printf("Waiting for messages...\nNumber of DC's now: %d", masterList->numberOfDCs);
 		fflush(stdout);
 
 		// Getting message from the DC
-		rc = msgrcv (qID, (void *)&messageFromDC, sizeof(MESSAGECONTENT), 0, 0);
+		rc = msgrcv (qID, (void *)&messageFromDC, sizeof(MESSAGECONTENT) - sizeof(long), 0, 0);
 		if (rc == -1) { break; }
 
-		printf ("\n\n(SERVER) Received: PID: %d\n(SERVER) Received: MSG CODE: %ld\n\n", messageFromDC->machinePID, messageFromDC->message_code);
+		printf("\n\n(SERVER) Received: PID: %d\n(SERVER) Received: MSG CODE: %ld\n\n", messageFromDC.machinePID, messageFromDC.message_code);
 
-		// Check if the DCs process ID is in the DCProcessIDList (It has already been connected to the DR and left) 
-		if ((checkProcessID = findDCprocessID(dcProcessIDList, messageFromDC->machinePID)) == FOUND) { continue; }
-		
-		// Update the DC to the master list
-		updateDC(masterList, messageFromDC->machinePID);
-
-		// Check the message from the DC
-		dcProcessIDList = checkMessageFromDC(masterList, dcProcessIDList, messageFromDC->message_code, messageFromDC->machinePID);
-		
 		// Get the current time in seconds
 		gettimeofday(&currentTimeStruct, NULL);	
 		currentTime = currentTimeStruct.tv_sec;
+
+		// Check if the DCs process ID is in the DCProcessIDList (It has already been connected to the DR and left)
+		if ((checkProcessID = findDCprocessID(dcProcessIDList, messageFromDC.machinePID)) == FOUND) { 
+			continue; 
+		}
+
+		// Update the DC to the master list
+		if (checkPIDFromMasterList(masterList, messageFromDC.machinePID) == NOT_FOUND) {
+			updateDC(masterList, messageFromDC.machinePID);
+			printf("%d is updated code: %ld\n",messageFromDC.machinePID, messageFromDC.message_code );
+		} else {
+			updateDCsLastHeardFrom(masterList, messageFromDC.machinePID, currentTime);
+		}
+		
+		
+		// Check the message from the DC
+		dcProcessIDList = checkMessageFromDC(masterList, dcProcessIDList, messageFromDC.message_code, messageFromDC.machinePID);
 
 		// Check if the DC has not sent any messages more than 35seconds to the DR
 		dcProcessIDList = checkLastHeardFrom(masterList, currentTime, dcProcessIDList);

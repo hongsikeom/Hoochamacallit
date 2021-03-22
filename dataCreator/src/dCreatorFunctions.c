@@ -21,7 +21,7 @@ int checkMsgQueue(){
     int smhKey = 0, msgQID = 0, errnum = 0;    
 
     //get msgQueue key 
-    smhKey = ftok("/tmp", KEY_ID);      
+    smhKey = ftok("/tmp", 'A');      
   
     //check if msgQ exixst loop
     while(msgQID <= CHECK_MSG_QUEUE)
@@ -40,7 +40,7 @@ int checkMsgQueue(){
             // fprintf(stderr, "Error: %s\n", strerror( errnum ));         
         }     
     }
- 
+
     return msgQID;
 }
 

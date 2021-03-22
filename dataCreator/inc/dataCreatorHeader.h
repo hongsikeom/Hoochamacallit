@@ -17,7 +17,7 @@
 #include <string.h>
 #include <time.h> 
 #include <stdlib.h> 
-#include "message_struct.h"
+#include "../../common/inc/message_struct.h"
 
 //Struct Definition
 
