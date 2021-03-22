@@ -12,9 +12,11 @@
 #include <sys/ipc.h>
 #include <sys/msg.h>
 #include <sys/shm.h>
+#include <errno.h>
 #include "../../common/inc/masterList.h"
 #include "../inc/dataReader.h"
 #include "../inc/semaphoreStruct.h"
+
 
 
 

@@ -22,7 +22,6 @@
 #include "../../common/inc/masterList.h"
 #include "../inc/dataReader.h"
 // #include "../inc/semaphoreStruct.h"
-	
 
 
 
@@ -36,8 +35,9 @@ void main(int argc, char *argv[])
 	int checkProcessID = 0;                   // Check the process id in the DCProcessIDList
 
 	struct timeval currentTimeStruct;               // Current time
+	long startTime;
 	long currentTime;
-	MasterList *masterList;    		  // MasterList
+	MasterList *masterList;    		  		  // MasterList
 	MESSAGECONTENT messageFromDC;
 	DCProcessIDList *dcProcessIDList = NULL;  // DC ProcessIDList (It will hold the ProcessIDs that have been 	
 											  // connnected to ther server and left)
@@ -80,29 +80,55 @@ void main(int argc, char *argv[])
 	printf("Shared Memory ID is: %d\n", shmID);
 	printf("============================================\n\n");
 
-	
+	gettimeofday(&currentTimeStruct, NULL);	
+	startTime = currentTimeStruct.tv_sec;
+
 	// Listening messages from DCs
 	while (msgRun == RUN)
 	{
-		printf("Waiting for messages...\n");
-		fflush(stdout);
+		// KEY CHECK=========================================
+		// key_t msgKey;
+		// msgKey = ftok("/tmp", 'A');
+		// if ((qID = msgget(msgKey, 0)) == -1)
+		// {
+		// 	printf("qID check %d\n", msgKey);
+		// } else {
+		// 	printf("qID check %d\n", msgKey);
+		// }
+		// KEY CHECK=========================================
 
-		for (int i = 0; i < masterList->numberOfDCs; i++){
-			printf("ProcessID in the list: %d\n", masterList->dc[i].dcProcessID);
-			fflush(stdout);
-    	}
 
-		// Getting message from the DC
-		// rc = msgrcv (qID, (void *)&messageFromDC, sizeof(MESSAGECONTENT) - sizeof(long), -1, IPC_NOWAIT);
-		rc = msgrcv (qID, (void *)&messageFromDC, sizeof(MESSAGECONTENT) - sizeof(long), 0, 0);
-		if (rc == -1) { break; }
-
-		printf("\n\n(SERVER) Received: PID: %d\n(SERVER) Received: MSG CODE: %ld\n\n", messageFromDC.machinePID, messageFromDC.message_code);
+		printf("Waiting for messages...\n Nuber of DCs: %d\n", masterList->numberOfDCs);
 		fflush(stdout);
 
 		// Get the current time in seconds
 		gettimeofday(&currentTimeStruct, NULL);	
 		currentTime = currentTimeStruct.tv_sec;
+		printf("time difference: %ld\n", currentTime - startTime);
+		if (currentTime - startTime > 35) {
+			printf("Time over done\n ");
+			break;
+		}
+
+		// Getting message from the DC
+		// rc = msgrcv (qID, (void *)&messageFromDC, sizeof(MESSAGECONTENT) - sizeof(long), -1, IPC_NOWAIT);
+		rc = msgrcv (qID, (void *)&messageFromDC, sizeof(MESSAGECONTENT) - sizeof(long), 0, IPC_NOWAIT);
+		if (rc == -1) { 
+			int errsv = errno;
+			if (errsv != 42) {
+				printf("Something happens! I'm out of here!");
+				break;
+			}
+			sleep(1.5);
+			continue;
+		}
+
+		gettimeofday(&currentTimeStruct, NULL);
+		startTime = currentTimeStruct.tv_sec;
+
+		printf("\n\n(SERVER) Received: PID: %d\n(SERVER) Received: MSG CODE: %ld\n\n", messageFromDC.machinePID, messageFromDC.message_code);
+		fflush(stdout);
+		
 
 		// Check if the DCs process ID is in the DCProcessIDList (It has already been connected to the DR and left)
 		if ((checkProcessID = findDCprocessID(dcProcessIDList, messageFromDC.machinePID)) == FOUND) { 
@@ -119,7 +145,7 @@ void main(int argc, char *argv[])
 		// Check the message from the DC
 		dcProcessIDList = checkMessageFromDC(masterList, dcProcessIDList, messageFromDC.message_code, messageFromDC.machinePID);
 
-		// Check if the DC has not sent any messages more than 35seconds to the DR
+		// Check if the DC has not sent any messages more than 35 seconds to the DR
 		dcProcessIDList = checkLastHeardFrom(masterList, currentTime, dcProcessIDList);
 		
 		// msgRun = STOP;

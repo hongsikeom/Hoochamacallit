@@ -10,6 +10,7 @@
 
 
 #include <sys/time.h>
+#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -29,8 +30,9 @@
 */
 DCProcessIDList * deleteDC(MasterList *masterList, pid_t dcProcessID, DCProcessIDList *dcProcessIDList)
 {
-    printf("The process ID that will be deleted: %d\n", dcProcessID);
-    fflush(stdout);
+    for (int i = 0; i < masterList->numberOfDCs; i++) {
+        printf("Before removed %d\tNumDC: %d\tDc: %d\n", dcProcessID, masterList->numberOfDCs, masterList->dc[i].dcProcessID);
+    }
     // Add process ID to the DCProcessIDList
     addDCprocessID(&dcProcessIDList, dcProcessID);
 
@@ -40,28 +42,20 @@ DCProcessIDList * deleteDC(MasterList *masterList, pid_t dcProcessID, DCProcessI
         // If the DC's ID is in the array,
         if (masterList->dc[i].dcProcessID == dcProcessID)
         {
-            // If the master list is holding only one DC
-            if (i == 0)
+           
+            // Remove and reset and re-arrange them.
+            for (int j = i; j < masterList->numberOfDCs; j++)
             {
-                // Remove and reset and re-arrange them.
-                for (int j = i; j < masterList->numberOfDCs; j++)
-                {
-                    masterList->dc[j] = masterList->dc[j + 1];
-                }
-            }
-            // If the master list is holding more than one DC
-            else
-            {
-                // Remove and reset and re-arrange them.
-                for (int j = i - 1; j < masterList->numberOfDCs; j++)
-                {
-                    masterList->dc[j] = masterList->dc[j + 1];
-                }
+                masterList->dc[j] = masterList->dc[j + 1];
             }
 
-            // Decrement numberOfDCs by 1;
+            //Decrement numberOfDCs by 1;
             masterList->numberOfDCs -= 1;
         }
+    }
+
+    for (int i = 0; i < masterList->numberOfDCs; i++) {
+        printf("After removed %d\tNumDC: %d\tDc: %d\n", dcProcessID, masterList->numberOfDCs, masterList->dc[i].dcProcessID);
     }
 
     return dcProcessIDList;
@@ -131,6 +125,7 @@ DCProcessIDList * checkMessageFromDC(MasterList *masterList , DCProcessIDList *d
         case OPERATOR_ERROR:
             break;
         case MACHINE_OFFLINE:
+            printf("%d will be deleted: RECEIVING MESSAGE MACHINE_OFFLINE\n", processID);
             dcProcessIDList = deleteDC(masterList, processID, dcProcessIDList);
             break;
         default:
@@ -155,6 +150,7 @@ DCProcessIDList *checkLastHeardFrom(MasterList *masterList, long currentTime, DC
 	for (int i = 0; i < masterList->numberOfDCs; i++) {
 		long timeDifferent = currentTime - masterList->dc[i].lastTimeHeardFrom;
 		if (timeDifferent > 35) {
+            printf("%d will be deleted: PASSED 35 SECONDS\n", masterList->dc[i].dcProcessID);
             addDCprocessID(&dcProcessIDList, masterList->dc[i].dcProcessID);
 			dcProcessIDList = deleteDC(masterList, masterList->dc[i].dcProcessID, dcProcessIDList);
 			i--;

@@ -36,14 +36,14 @@ while(msg.message_code != MACHINE_OFFLINE){
     msg.machinePID = myPid;
 
     //printf("msgPID = %d\n", msg.machinePID);
-    srand(time(NULL));
+    srand(time(0));
 
     msg.message_code = getRandomMsgStatus();
     //printf("MsgStatus = %ld\n", msg.message_code);
     getMsgCodeDescription(msg.msgDescription, msg.message_code);
     printf("MsgStatus description = %s\n", msg.msgDescription);
 
-    srand(time(NULL));
+    srand(time(0));
     sendTimer = getRandomTimer();
 
     //send msg
