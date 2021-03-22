@@ -12,7 +12,6 @@
 #include <sys/ipc.h>
 #include <sys/msg.h>
 #include <sys/shm.h>
-#include "../../common/inc/hoochamacallit.h"
 #include "../../common/inc/masterList.h"
 #include "../inc/dataReader.h"
 #include "../inc/semaphoreStruct.h"
@@ -30,7 +29,7 @@ int createMessageQueue()
 {
 	// Message key and Queue ID
 	key_t msgKey;
-	int qID = -1;
+	int qID = 0;
 
 	// Generate the key
 	msgKey = ftok("/tmp", 'A');
@@ -40,6 +39,7 @@ int createMessageQueue()
 	{
 		printf("Server cannot create key!\n");
 		fflush(stdout);
+		qID = -1;
 	}
 
 	// Check the message queue ID
@@ -66,7 +66,14 @@ int createSharedMemory()
 {
 	// Shared memory key and ID
 	key_t shmem_key;
-	int shmID = -1;
+	int shmID = 0;
+
+	shmem_key = ftok (".", 'M');
+
+	// If ftok fails
+	if (shmem_key == -1) {
+		shmID = -1;
+	}
 
 	// Check the message queue ID
 	if ((shmID = shmget(shmem_key, sizeof(MasterList), 0)) == -1)

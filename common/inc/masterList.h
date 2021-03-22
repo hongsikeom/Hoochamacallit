@@ -52,7 +52,7 @@ extern struct DCProcessIDList DCProcessIDList;
 DCProcessIDList * deleteDC(MasterList *masterList, pid_t dcProcessID, DCProcessIDList *dcProcessIDList);
 void updateDC(MasterList *masterList, pid_t dcProcessID);
 DCProcessIDList *checkLastHeardFrom(MasterList *masterList, long currentTime, DCProcessIDList *dcProcessIDList);
-void checkMessageFromDC(MasterList *masterList ,int messageNum, pid_t processID);
+DCProcessIDList * checkMessageFromDC(MasterList *masterList , DCProcessIDList *dcProcessIDList, int messageNum, pid_t processID);
 
 int addDCprocessID(DCProcessIDList **pHead, pid_t dcProcessID);
 int findDCprocessID(DCProcessIDList *pHead, pid_t dcProcessID);

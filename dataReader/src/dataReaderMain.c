@@ -91,7 +91,7 @@ void main(int argc, char *argv[])
 		rc = msgrcv (qID, (void *)&messageFromDC, sizeof(MESSAGECONTENT), 0, 0);
 		if (rc == -1) { break; }
 
-		printf ("\n\n(SERVER) Received: PID: %d\n(SERVER) Received: MSG CODE: %d\n\n", messageFromDC->machinePID, messageFromDC->message_code);
+		printf ("\n\n(SERVER) Received: PID: %d\n(SERVER) Received: MSG CODE: %ld\n\n", messageFromDC->machinePID, messageFromDC->message_code);
 
 		// Check if the DCs process ID is in the DCProcessIDList (It has already been connected to the DR and left) 
 		if ((checkProcessID = findDCprocessID(dcProcessIDList, messageFromDC->machinePID)) == FOUND) { continue; }
@@ -100,7 +100,7 @@ void main(int argc, char *argv[])
 		updateDC(masterList, messageFromDC->machinePID);
 
 		// Check the message from the DC
-		checkMessageFromDC(masterList ,messageFromDC->message_code, messageFromDC->machinePID);
+		dcProcessIDList = checkMessageFromDC(masterList, dcProcessIDList, messageFromDC->message_code, messageFromDC->machinePID);
 		
 		// Get the current time in seconds
 		gettimeofday(&currentTimeStruct, NULL);	
