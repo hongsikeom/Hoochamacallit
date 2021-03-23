@@ -8,8 +8,11 @@
 * ================================================================================*/
 
 
+#define     RUN     1
+#define     STOP    0
+#define     SHMKEY  16535
+
 // Function prototypes
 int createMessageQueue();
 int createSharedMemory();
-void alarmHandler(int sigNum);
 // void checkDCProcessID(pid_t *DCProcessIDList, int *listCounter, pid_t DCprocessID);

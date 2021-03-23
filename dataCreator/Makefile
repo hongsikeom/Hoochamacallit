@@ -18,21 +18,21 @@
 # =======================================================
 #                     Dependencies
 # =======================================================                     
-./obj/dCreatorFunctions.o : ./src/dCreatorFunctions.c ./inc/dataCreatorHeader.h
+./obj/dCreatorFunctions.o : ./src/dCreatorFunctions.c ./inc/dataCreatorHeader.h ../common/inc/message_struct.h
 	cc  -c ./src/dCreatorFunctions.c -o ./obj/dCreatorFunctions.o
 	
-./obj/dCreatorMain.o : ./src/dCreatorMain.c ./inc/dataCreatorHeader.h
+./obj/dCreatorMain.o : ./src/dCreatorMain.c ./inc/dataCreatorHeader.h ../common/inc/message_struct.h
 	cc  -c ./src/dCreatorMain.c -o ./obj/dCreatorMain.o	
 
 #
 # =======================================================
 # Other targets
 # =======================================================                     
-all : ./bin/myApp # ********DELETE IT
 
 clean:
 	rm -f ./bin/*
 	rm -f ./obj/*.o
+	
 	
 
 

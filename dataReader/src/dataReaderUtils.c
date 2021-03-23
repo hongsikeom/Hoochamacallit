@@ -12,10 +12,11 @@
 #include <sys/ipc.h>
 #include <sys/msg.h>
 #include <sys/shm.h>
-#include "../../common/inc/hoochamacallit.h"
+#include <errno.h>
 #include "../../common/inc/masterList.h"
 #include "../inc/dataReader.h"
 #include "../inc/semaphoreStruct.h"
+
 
 
 
@@ -30,7 +31,7 @@ int createMessageQueue()
 {
 	// Message key and Queue ID
 	key_t msgKey;
-	int qID = -1;
+	int qID = 0;
 
 	// Generate the key
 	msgKey = ftok("/tmp", 'A');
@@ -40,8 +41,10 @@ int createMessageQueue()
 	{
 		printf("Server cannot create key!\n");
 		fflush(stdout);
+		qID = -1;
+		return qID;
 	}
-
+	
 	// Check the message queue ID
 	if ((qID = msgget(msgKey, 0)) == -1)
 	{
@@ -66,7 +69,15 @@ int createSharedMemory()
 {
 	// Shared memory key and ID
 	key_t shmem_key;
-	int shmID = -1;
+	int shmID = 0;
+
+	shmem_key = ftok (".", SHMKEY);
+
+	// If ftok fails
+	if (shmem_key == -1) {
+		shmID = -1;
+		return shmID;
+	}
 
 	// Check the message queue ID
 	if ((shmID = shmget(shmem_key, sizeof(MasterList), 0)) == -1)
@@ -78,46 +89,3 @@ int createSharedMemory()
 
 	return shmID;
 }
-
-
-
-// void checkDCProcessID(pid_t *DCProcessIDList, int *listCounter, pid_t DCprocessID)
-// {
-// 	printf("start??");
-// 	pid_t *newList = NULL;
-
-// 	if (*listCounter == 0)
-// 	{
-// 		DCProcessIDList = (pid_t *)malloc(sizeof(pid_t));
-// 		DCProcessIDList = &DCprocessID;
-// 		*listCounter += 4;
-// 	}
-// 	else
-// 	{
-// 		int index = 0;
-// 		int isItInTheList = -1;
-// 		while (index < *listCounter)
-// 		{
-// 			DCProcessIDList += index;
-
-// 			if (*DCProcessIDList == DCprocessID)
-// 			{
-// 				isItInTheList = 1;
-// 				break;
-// 			}
-// 			index += 4;
-// 		}
-
-// 		if (isItInTheList = -1)
-// 		{
-// 			*listCounter += 4;
-
-// 			newList = (pid_t *)realloc(DCProcessIDList, sizeof(pid_t) * *listCounter);
-// 			DCProcessIDList = newList;
-
-// 			DCProcessIDList = &DCprocessID;
-// 		}
-// 	}
-
-// 	printf("aa:%d\n count:%d\n", *DCProcessIDList, *listCounter);
-// }

@@ -7,20 +7,18 @@
 #===============================================================================
 
 # Build
-./bin/dataReader	: ./obj/dataReaderMain.o ./obj/dataReaderUtils.o ./obj/masterListWorker.o ./obj/dcProcessIDListWorker.o
-	cc ./obj/dataReaderMain.o ./obj/dataReaderUtils.o ./obj/masterListWorker.o ./obj/dcProcessIDListWorker.o -o ./bin/dataReader
+./bin/dataReader	: ./obj/dataReaderMain.o ./obj/dataReaderUtils.o ./obj/masterListWorker.o 
+	cc ./obj/dataReaderMain.o ./obj/dataReaderUtils.o ./obj/masterListWorker.o  -o ../common/bin/dataReader
 
-./obj/masterListWorker.o	: ./src/masterListWorker.c ../common/inc/hoochamacallit.h ../common/inc/masterList.h ./inc/dataReader.h ./inc/semaphoreStruct.h
+./obj/masterListWorker.o	: ./src/masterListWorker.c  ../common/inc/masterList.h ./inc/dataReader.h ./inc/semaphoreStruct.h ../common/inc/message_struct.h
 	cc -c ./src/masterListWorker.c -o ./obj/masterListWorker.o
 
-./obj/dataReaderUtils.o	: ./src/dataReaderUtils.c ../common/inc/hoochamacallit.h ../common/inc/masterList.h ./inc/dataReader.h ./inc/semaphoreStruct.h
+./obj/dataReaderUtils.o	: ./src/dataReaderUtils.c  ../common/inc/masterList.h ./inc/dataReader.h ./inc/semaphoreStruct.h ../common/inc/message_struct.h
 	cc -c  ./src/dataReaderUtils.c -o ./obj/dataReaderUtils.o
 
-./obj/dataReaderMain.o : ./src/dataReaderMain.c ../common/inc/hoochamacallit.h ../common/inc/masterList.h ./inc/dataReader.h ./inc/semaphoreStruct.h
+./obj/dataReaderMain.o : ./src/dataReaderMain.c  ../common/inc/masterList.h ./inc/dataReader.h ./inc/semaphoreStruct.h ../common/inc/message_struct.h
 	cc -c ./src/dataReaderMain.c  -o ./obj/dataReaderMain.o 
 
-./obj/dcProcessIDListWorker.o	: ./src/dcProcessIDListWorker.c ./inc/dcProcessIDList.h
-	cc -c ./src/dcProcessIDListWorker.c -o ./obj/dcProcessIDListWorker.o
 
 # Clean
 

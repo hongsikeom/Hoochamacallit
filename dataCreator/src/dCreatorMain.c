@@ -11,46 +11,61 @@
 
 
 //#include <stdio.h>
+#include <unistd.h>
 #include "../inc/dataCreatorHeader.h"
 
 void main(int argc, char *argv[]){
 
     printf("Data Creator Starting...\n");
-
     //check message queue 
     int msgQID = checkMsgQueue();
 
     //get process id
-    int myPid = getpid();
-    
+    pid_t myPid = getpid();
+
     //populate message
-    MESSAGECONTENT msg = {0,"",0};
+    MESSAGECONTENT msg;
     int sendTimer = 0;
+
+    printf("\n queue ID: %d\n", msgQID);
+    printf("\n pID ID: %d\n", myPid);
+    int firstMsg = 0;
 
 while(msg.message_code != MACHINE_OFFLINE){
 
     //Build msg
     msg.machinePID = myPid;
+
     //printf("msgPID = %d\n", msg.machinePID);
-    srand(time(NULL));
-    msg.message_code = getRandomMsgStatus();
+    srand(time(0));
+
+    if (firstMsg == 0) {
+        msg.message_code = 0;
+        firstMsg++;
+    } else {
+        msg.message_code = getRandomMsgStatus();
+        firstMsg++;
+    }
+
     //printf("MsgStatus = %ld\n", msg.message_code);
     getMsgCodeDescription(msg.msgDescription, msg.message_code);
-    //printf("MsgStatus description = %s\n", msg.msgDescription);
+    printf("MsgStatus description = %s\n", msg.msgDescription);
 
-    srand(time(NULL));
+    srand(time(0));
     sendTimer = getRandomTimer();
 
     //send msg
     int msgSize = sizeof(msg) - sizeof(long);
-    msgsnd(msgQID, (void*)&msg,msgSize, 0);
 
+    printf("message code: %d\n", msg.message_code);
+    msgsnd(msgQID, (void*)&msg,msgSize, 0);
+    printf("timer: %d\n", sendTimer);
     sleep(sendTimer);
 
     
 
 }
-    
+    printf("\nClosed\n");
     
 
 
