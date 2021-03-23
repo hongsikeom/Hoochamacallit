@@ -57,7 +57,7 @@ while(msg.message_code != MACHINE_OFFLINE){
     //send msg
     int msgSize = sizeof(msg) - sizeof(long);
 
-    printf("message code: %ld\n", msg.message_code);
+    printf("message code: %d\n", msg.message_code);
     msgsnd(msgQID, (void*)&msg,msgSize, 0);
     printf("timer: %d\n", sendTimer);
     sleep(sendTimer);

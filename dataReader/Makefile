@@ -8,7 +8,7 @@
 
 # Build
 ./bin/dataReader	: ./obj/dataReaderMain.o ./obj/dataReaderUtils.o ./obj/masterListWorker.o 
-	cc ./obj/dataReaderMain.o ./obj/dataReaderUtils.o ./obj/masterListWorker.o  -o ./bin/dataReader
+	cc ./obj/dataReaderMain.o ./obj/dataReaderUtils.o ./obj/masterListWorker.o  -o ../common/bin/dataReader
 
 ./obj/masterListWorker.o	: ./src/masterListWorker.c  ../common/inc/masterList.h ./inc/dataReader.h ./inc/semaphoreStruct.h ../common/inc/message_struct.h
 	cc -c ./src/masterListWorker.c -o ./obj/masterListWorker.o

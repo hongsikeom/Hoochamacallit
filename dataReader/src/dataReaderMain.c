@@ -98,13 +98,13 @@ void main(int argc, char *argv[])
 		// KEY CHECK=========================================
 
 
-		printf("Waiting for messages...\n Nuber of DCs: %d\n", masterList->numberOfDCs);
+		//printf("Waiting for messages...\n Nuber of DCs: %d\n", masterList->numberOfDCs);
 		fflush(stdout);
 
 		// Get the current time in seconds
 		gettimeofday(&currentTimeStruct, NULL);	
 		currentTime = currentTimeStruct.tv_sec;
-		printf("time difference: %ld\n", currentTime - startTime);
+		//printf("time difference: %ld\n", currentTime - startTime);
 		if (currentTime - startTime > 35) {
 			printf("Time over done\n ");
 			break;
@@ -126,6 +126,7 @@ void main(int argc, char *argv[])
 		startTime = currentTimeStruct.tv_sec;
 
 		printf("\n\n(SERVER) Received: PID: %ld\n(SERVER) Received: MSG CODE: %d\n\n", messageFromDC.machinePID, messageFromDC.message_code);
+		printf("Number of DCs: %d\n", masterList->numberOfDCs);
 		fflush(stdout);
 		
 
