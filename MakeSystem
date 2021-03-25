@@ -1,0 +1,61 @@
+#===============================================================================
+# FILE 			: makefile
+# PROJECT 		: SENG2330 - Assignment #3
+# PROGRAMMER    	: Hongsik Eom and Janeth Santos
+# FIRST VERSION 	: March 29,2021
+# DESCRIPTION   	: This file calls all Makefiles in subdirectories and build them. 
+#===============================================================================
+# !/bin/bash
+#If Makefile is in the dataCommon folder
+if [ -f "./common/Makefile" ] 
+then
+	if [ "$1" = "clean" ]; 
+	then
+		make -C ./common clean
+	else
+		make -C ./common
+	fi
+else
+ 	echo Makefile does not exist in common folder
+fi
+# If Makefile is in the dataCreator folder
+if [ -f "./DC/Makefile" ]
+then
+	if [ "$1" = "clean" ]; 
+	then
+		make -C ./DC clean
+	else
+		make -C ./DC
+	fi
+else
+ 	echo Makefile does not exist in dataCreator folder
+	exit
+fi
+# If Makefile is in the dataReader folder
+if [ -f "./DR/Makefile" ] 
+then
+	if [ "$1" = "clean" ]; 
+	then
+		make -C ./DR clean
+	else
+		make -C ./DR
+	fi
+else
+ 	echo Makefile does not exist in dataReader folder
+	exit
+fi
+# If Makefile is in the dataCorruptor folder
+if [ -f "./DX/Makefile" ] 
+then
+	if [ "$1" = "clean" ]; 
+	then
+		make -C ./DX clean
+	else
+		make -C ./DX
+	fi
+else
+ 	echo Makefile does not exist in dataCorruptor folder
+	exit
+fi
+
+
